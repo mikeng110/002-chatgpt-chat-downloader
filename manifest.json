@@ -5,13 +5,11 @@
   "manifest_version": 3,
   "content_scripts": [
     {
-      "js": ["scripts/content.js"],
-      "matches": [
-        "https://developer.chrome.com/docs/extensions/*",
-        "https://developer.chrome.com/docs/webstore/*"
-      ]
+        "matches": ["https://chatgpt.com/*"],
+        "js": ["scripts/content.js"],
+        "run_at": "document_idle"
     }
-  ],
+],
   "action": {
     "default_popup": "hello.html"
   }
