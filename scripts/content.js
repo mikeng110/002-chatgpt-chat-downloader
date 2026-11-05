@@ -1,25 +1,47 @@
+//todo 
+//Identify what data-turn have already been handled 
+//skip if 
+//
+
+    //   //  console.log(children[i].outerHTML);
+    //    // console.log(children[i].querySelector("pre code")?.textContent);
 function extractMessages() {
-    const messages = document.querySelectorAll('[data-chatgpt-selection-message-id]');
+    //desire to include prompt then response 
 
-    console.log("Messages found:", messages.length);
-    const message = messages[0];
 
-    var children = message.querySelector('[data-markdown-text-style]').children;
+    //assume always one prompt, and one response 
+    const turns = document.querySelectorAll('[data-turn-key]');
 
-    const entry = []
-    for (var i = 0; i < children.length; i++) {
-    console.dir(children[i])
-        entry.push({
-            type: children[i].nodeName,
-            content: children[i].innerText
-        })
-    };
+    const turnsData = []
 
-    const messageData = {
-        role: "assistant",
-        blocks: entry
+    for (let turn of turns) {
+        console.dir(turn)
+        const  user_message = turn.querySelector('[data-user-message-bubble]')
+        const ai__message =  turn.querySelector('[data-chatgpt-selection-message-id]');
+
+        const entry = []
+
+        var children = ai__message.children
+
+        for (var i = 0; i < children.length; i++) {
+             entry.push({
+                type: children[i].nodeName,  
+                content: children[i].innerText
+            })
+        }
+
+        const messageData = {
+            thread: turn.baseURI,
+            turn: turn.dataset.turnKey, 
+            user_message: user_message.innerText,
+            ai_blocks: entry,
+            raw: turn.innerHTML
+        }
+
+        turnsData.push(messageData)
     }
-    const json = JSON.stringify(messageData, null, 2);
+
+    const json = JSON.stringify(turnsData, null, 2);
 
     return json
 }
@@ -49,7 +71,7 @@ const observer = new MutationObserver(function() {
     if (messages.length > 0) {
         console.log("Messages have appeared!");
         observer.disconnect();
-        json = extractMessages();
+        const json = extractMessages();
         saveFile(json)
 
     }
