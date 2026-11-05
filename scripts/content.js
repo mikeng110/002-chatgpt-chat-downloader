@@ -21,21 +21,23 @@ function extractMessages() {
     }
     const json = JSON.stringify(messageData, null, 2);
 
-    console.log(json);
+    return json
+}
 
+function saveFile(json){
     const blob = new Blob([json], {
     type: "application/json"
-});
+    });
 
-const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
-const link = document.createElement("a");
-link.href = url;
-link.download = "conversation.json";
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "conversation.json";
 
-link.click();
+    link.click();
 
-URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
 
 }
 
@@ -47,7 +49,9 @@ const observer = new MutationObserver(function() {
     if (messages.length > 0) {
         console.log("Messages have appeared!");
         observer.disconnect();
-        extractMessages();
+        json = extractMessages();
+        saveFile(json)
+
     }
 });
 observer.observe(document.body, {
